@@ -1,20 +1,21 @@
 from django.http import request
 from django_twilio.decorators import twilio_view
-from django_twilio.request import decompose, TwilioRequest
-from .models import Doctors_list
+from django_twilio.request import decompose
 from twilio.twiml.messaging_response import MessagingResponse
-# Create your views here
-
+from .models import Contacts
 
 @twilio_view
-def subscription(request):
-    decompose(request)
-
-    contact_number = str(TwilioRequest.__class__('from_'))
-    Doctors_list.append(contact_number)
+def sms_choice(request):
+    twilio_request = decompose(request)
+    contact_num = twilio_request.from_
+    response = twilio_request.body
+    contact_info = ['Thanks for your subscription',
+                    "How old are you?", "Annual Income?"]
     resp = MessagingResponse()
-    resp.message('Peace God',)
-    return str(resp)
-
-
-print(Doctors_list)
+    contact, created = Contacts.objects.get_or_create(customer_number=contact_num)
+    if created:
+        resp.message(contact_info[0])
+    else:
+        resp.message(contact_info[1])
+    print(contact_num, response)
+    return resp
