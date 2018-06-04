@@ -124,11 +124,13 @@ def sms_choices(request):
             if response.lower() == 'no':
                 contact.dental_insurance = False
                 contact.last_sms = '6'
+                resp.message('Thank you for participation. As more services become available, we will be in touch')
                 contact.save()
 
             elif response.lower() == 'yes':
                 contact.dental_insurance = True
                 contact.last_sms = '6'
+                resp.message('Thank you for participation. As more services become available, we will be in touch')
                 contact.save()
 
             else:
